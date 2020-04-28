@@ -7,15 +7,19 @@ import numpy as np
 def main():
     confirmed = pd.read_csv(
         "data/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
-    confirmed_top_10 = convert(confirmed).iloc[:, :12]
-    print(confirmed_top_10)
+    confirmed = convert(confirmed)
+    confirmed_top_10 = confirmed.iloc[:, :12] # top 10 including "Total"
     # Total confirmed cases
     plot(confirmed_top_10.loc[:, "Total"], "Time series of total confirmed cases",
          "Dates", "Number of confirmed cases")
     # Confirmed cases except total
     plot(confirmed_top_10.drop(columns=[
          "Total"]), "Time series of confirmed cases amongst countries", "Dates", "Number of confirmed cases")
-    # bar_plot(confirmed.drop(columns=["Total"]).tail(1).T)
+    # New cases of confirmed cases (only includes Total and 10 countries having the highest confirmed cases)
+    new_cases = confirmed_top_10.diff().fillna(confirmed)
+    plot(new_cases, "New confirmed cases in global", "Dates", "New confirmed cases")
+    # bar chart of confirmed cases amongst countries (top 20)
+    bar_plot(confirmed.iloc[:, :20].drop(columns=["Total"]).tail(1).T)
 
 # filter data
 
